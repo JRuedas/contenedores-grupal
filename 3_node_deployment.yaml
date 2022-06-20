@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: node-app
+  namespace: act-namespace
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+    spec:
+      containers:
+        - name: node-app
+          image: nacchofer31/act2
+          env:
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "root"
+            - name: CONNECTION
+              value: "mongo-svc"
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-service
+  namespace: act-namespace
+spec:
+  selector:
+    app: node-app
+  ports:
+    - port: 10000
+      targetPort: 3000
+  type: LoadBalancer
