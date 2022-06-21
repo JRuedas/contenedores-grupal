@@ -41,6 +41,18 @@ spec:
         ports:
         - name: app
           containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 1
+          periodSeconds: 2
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 2
+          periodSeconds: 2
         resources:
           requests:
             memory: "100Mi"
