@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-app-svc
+  namespace: applications
+  labels:
+    app: node-app
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 3000
+    nodePort: 30000
+    protocol: TCP
+  selector:
+    app: node-app
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+  namespace: applications
+  labels:
+    app: node-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+    spec:
+      containers:
+      - name: app
+        image: jruedas92/node_app_practica_2:v2
+        envFrom:
+        - configMapRef:
+            name: node-app-cm
+        ports:
+        - name: app
+          containerPort: 3000
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "250m"
+          limits:
+            memory: "200Mi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-app-cm
+  namespace: applications
+data:
+  MONGODB_URL: "mongodb://mongodb-svc:27017/app_db"
+  JWT_SECRET: "12345"
+  JWT_TIMEOUT_DURATION: "2 hours"
+  EMAIL_SMTP_HOST: YourSMTPServerr
+  EMAIL_SMTP_PORT: "25"
+  EMAIL_SMTP_USERNAME: YourUser
+  EMAIL_SMTP_PASSWORD: YourPass
+  EMAIL_SMTP_SECURE: "false"
