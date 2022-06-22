@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: jruedas92/node_app_practica_2:v2
+        image: jruedas92/node_app_practica_2:v3
         envFrom:
         - configMapRef:
             name: node-app-cm
