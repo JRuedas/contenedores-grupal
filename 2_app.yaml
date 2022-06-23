@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: node-app-svc
-  namespace: applications
+  namespace: kubernetes-unir
   labels:
     app: node-app
 spec:
@@ -19,11 +19,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: node-app
-  namespace: applications
+  namespace: kubernetes-unir
   labels:
     app: node-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: node-app
@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: jruedas92/node_app_practica_2:v2
+        image: pedroeltorre/unir-contenedores:nodejs
         envFrom:
         - configMapRef:
             name: node-app-cm
@@ -66,13 +66,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: node-app-cm
-  namespace: applications
+  namespace: kubernetes-unir
 data:
-  MONGODB_URL: "mongodb://mongodb-svc:27017/app_db"
-  JWT_SECRET: "12345"
-  JWT_TIMEOUT_DURATION: "2 hours"
-  EMAIL_SMTP_HOST: YourSMTPServerr
-  EMAIL_SMTP_PORT: "25"
-  EMAIL_SMTP_USERNAME: YourUser
-  EMAIL_SMTP_PASSWORD: YourPass
-  EMAIL_SMTP_SECURE: "false"
+  MONGO_USERNAME: "sammy"
+  MONGO_PASSWORD: "unir"
+  MONGO_HOSTNAME: "mongodb-svc"
+  MONGO_PORT: "27017"
+  MONGO_DB: "sharkinfo"

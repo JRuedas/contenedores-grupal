@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongodb-svc
-  namespace: applications
+  namespace: kubernetes-unir
   labels:
     app: mongodb
 spec:
@@ -18,7 +18,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongodb
-  namespace: applications
+  namespace: kubernetes-unir
   labels:
     app: mongodb
 spec:
@@ -34,12 +34,15 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: mongo:4.4.14-focal
+        image: mongo:4.1.8-xenial
+        envFrom:
+        - configMapRef:
+            name: mongodb-app-cm  
         ports:
         - name: mongo
           containerPort: 27017
         volumeMounts:
-        - name: mongo-data
+        - name: dbdata
           mountPath: /data/db
         resources:
           requests:
@@ -50,7 +53,7 @@ spec:
             cpu: "500m"
   volumeClaimTemplates:
   - metadata:
-      name: mongo-data
+      name: dbdata
       labels:
         app: mongodb
     spec:
@@ -58,3 +61,14 @@ spec:
       resources:
         requests:
           storage: 1Gi
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongodb-app-cm
+  namespace: kubernetes-unir
+data:
+  MONGO_INITDB_ROOT_USERNAME: "sammy"
+  MONGO_INITDB_ROOT_PASSWORD: "unir"
